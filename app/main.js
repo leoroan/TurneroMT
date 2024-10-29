@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron'
-
 import { join } from 'node:path'
+const { spawn } = require('child_process')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -29,11 +29,24 @@ const createWindow = () => {
   // mainWindow.webContents.openDevTools()
 }
 
+// Iniciar servidor Express en paralelo con Electron
+function startServer () {
+  const serverProcess = spawn('node', ['./server/index.js'], {
+    stdio: 'inherit',
+    shell: true
+  })
+
+  serverProcess.on('close', (code) => {
+    console.log(`Server exited with code ${code}`)
+  })
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
+  startServer()
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
