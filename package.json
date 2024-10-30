@@ -3,7 +3,7 @@
   "productName": "turneromt",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": ".webpack/main",
+  "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -19,21 +19,21 @@
     "@electron-forge/maker-zip": "^7.5.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
     "@electron-forge/plugin-fuses": "^7.5.0",
-    "@electron-forge/plugin-webpack": "^7.5.0",
+    "@electron-forge/plugin-vite": "^7.5.0",
     "@electron/fuses": "^1.8.0",
-    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
-    "css-loader": "^6.11.0",
     "electron": "33.0.2",
-    "node-loader": "^2.0.0",
-    "style-loader": "^3.3.4"
+    "vite": "^5.0.12"
   },
   "keywords": [],
   "author": {
-    "name": "Leandro",
+    "name": "Leandro Maselli",
     "email": "leoroan@gmail.com"
   },
   "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "sequelize": "^6.37.5",
+    "sqlite3": "^5.1.7",
+    "turneromt": "file:"
   }
 }
