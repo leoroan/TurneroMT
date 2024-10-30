@@ -90,4 +90,4 @@ typings/
 
 # Electron-Forge
 out/
-database/
+database/*
