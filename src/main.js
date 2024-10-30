@@ -12,6 +12,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
+    nodeIntegration: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -24,12 +26,16 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  })
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 };
 
 // Iniciar servidor Express en paralelo con Electron
-function startServer () {
+function startServer() {
   const serverProcess = spawn('node', ['./server/index.js'], {
     stdio: 'inherit',
     shell: true

@@ -28,4 +28,22 @@
 
 import './index.css';
 
+let count = 0;
+
+const numberDisplay = document.getElementById('number');
+const addButton = document.getElementById('addButton');
+const subtractButton = document.getElementById('subtractButton');
+
+// Incrementa el número
+addButton.addEventListener('click', () => {
+  count++;
+  numberDisplay.textContent = count;
+});
+
+// Decrementa el número
+subtractButton.addEventListener('click', () => {
+  count--;
+  numberDisplay.textContent = count;
+});
+
 console.log('👋 This message is being logged by "renderer.js", included via Vite');
