@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllUsers, createUser } = require('../services/userService')
+const { getAllUsers, createUser } = require('../services/user.service')
 
 const router = express.Router()
 

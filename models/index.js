@@ -2,19 +2,19 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/db.config')
 
 // Cargar modelos
-const User = require('./User')// Importar el modelo
-const Servicio = require('./Servicio')
-const Turno = require('./Turno')
+const User = require('./User.model')// Importar el modelo
+const Turno = require('./Turno.model')
+const Servicio = require('./Servicio.model')
 
 // Establezco las relaciones
-Servicio.hasMany(Turno, { foreignKey: { allowNull: false, }, onDelete: 'CASCADE' });
-Turno.belongsTo(Servicio, { foreignKey: { allowNull: false, } });
+Servicio.hasMany(Turno, { foreignKey: 'servicioId', as: 'turnos' });
+Turno.belongsTo(Servicio, { foreignKey: 'servicioId', as: 'servicio' });
 
 // Sincronizar la base de datos
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ force: false, alter: true }) // Cambiar a true para forzar la recreación de tablas
-    // await sequelize.sync()
+    // await sequelize.sync({ force: true, alter: true }) // Cambiar a true para forzar la recreación de tablas
+    await sequelize.sync()
     console.log('Database synced')
   } catch (error) {
     console.error('Error syncing database:', error)
@@ -24,5 +24,7 @@ const syncDatabase = async () => {
 module.exports = {
   sequelize,
   syncDatabase,
-  User
+  User,
+  Turno,
+  Servicio
 }

@@ -1,49 +1,65 @@
-/**
- * This file will automatically be loaded by vite and run in the "renderer" context.
- * To learn more about the differences between the "main" and the "renderer" context in
- * Electron, visit:
- *
- * https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes
- *
- * By default, Node.js integration in this file is disabled. When enabling Node.js integration
- * in a renderer process, please be aware of potential security implications. You can read
- * more about security risks here:
- *
- * https://electronjs.org/docs/tutorial/security
- *
- * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
- * flag:
- *
- * ```
- *  // Create the browser window.
- *  mainWindow = new BrowserWindow({
- *    width: 800,
- *    height: 600,
- *    webPreferences: {
- *      nodeIntegration: true
- *    }
- *  });
- * ```
- */
-
 import './index.css';
 
-let count = 0;
+// URL de la API para obtener los servicios
+const apiServiciosURL = 'http://localhost:8081/api/servicios/';
 
-const numberDisplay = document.getElementById('number');
-const addButton = document.getElementById('addButton');
-const subtractButton = document.getElementById('subtractButton');
+// URL de la API para hacer el POST de turnos
+const apiTurnosURL = 'http://localhost:8081/api/turnos/';
 
-// Incrementa el número
-addButton.addEventListener('click', () => {
-  count++;
-  numberDisplay.textContent = count;
-});
+// Función para obtener los servicios y agregarlos como botones
+async function cargarServicios() {
+  try {
+    // Realizar la solicitud a la API
+    const response = await fetch(apiServiciosURL);
+    const servicios = await response.json();
 
-// Decrementa el número
-subtractButton.addEventListener('click', () => {
-  count--;
-  numberDisplay.textContent = count;
-});
+    // Seleccionar el contenedor donde se agregarán los botones
+    const serviciosDiv = document.getElementById('servicios');
 
-console.log('👋 This message is being logged by "renderer.js", included via Vite');
+    // Iterar sobre los servicios y crear un botón para cada uno
+    servicios.forEach(servicio => {
+      // Crear un botón
+      const boton = document.createElement('button');
+      boton.classList.add('boton-servicio', 'btn', 'btn-success', 'm-5', 'shadow-lg', 'btn-lg', 'p-5');
+      boton.textContent = servicio.nombre;
+      boton.onclick = () => {
+        console.log(`Seleccionaste el servicio: ${servicio.nombre}, ${servicio.id}`);
+        crearTurno(servicio.id);
+      };
+
+      // Agregar el botón al div de servicios
+      serviciosDiv.appendChild(boton);
+    });
+  } catch (error) {
+    console.error('Error al cargar los servicios:', error);
+  }
+}
+
+// Función para hacer POST del turno con el servicioId
+async function crearTurno(servicioId) {  
+  try {
+    const data = { servicioId: servicioId };
+    const response = await fetch(`${apiTurnosURL}${servicioId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+      const turno = await response.json();
+      console.log(turno);
+      alert(`Su turno es: N° ${turno.numeroTurno}`);
+    } else {
+      alert('Error al crear el turno');
+    }
+  } catch (error) {
+    console.error('Error al crear el turno: ', error);
+    alert('Hubo un error al crear el turno');
+  }
+}
+
+// Cargar los servicios al cargar la página
+window.onload = cargarServicios;
+
