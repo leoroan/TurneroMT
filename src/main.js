@@ -7,14 +7,17 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const editWindow = () => {
+const editWindow = (mainWindow) => {
   // Crear la nueva ventana de edición
   const editWindow = new BrowserWindow({
     width: 400,
     height: 300,
     title: 'Editar',
-    // parent: mainWindow, // Hacer que la ventana de edición sea hija de la principal
+    alwaysOnTop: true,
+    parent: mainWindow, // Hacer que la ventana de edición sea hija de la principal
     modal: true,
+    autoHideMenuBar: true,
+    resizable: true,
     webPreferences: {
       contextIsolation: true,
       enableRemoteModule: false,
@@ -28,7 +31,7 @@ const editWindow = () => {
     return;
   }
 
-  editWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/edit.html`)); // Cargar el contenido de la ventana de edición
+  editWindow.loadFile(path.join(__dirname, `../views/editar/edit.html`)); // Cargar el contenido de la ventana de edición
 
   // Liberar el objeto editWindow cuando se cierre la ventana
   editWindow.on('closed', () => {
@@ -42,6 +45,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     show: false,
+    // closable: false,
     contextIsolation: true,
     enableRemoteModule: false,
     nodeIntegration: false,
@@ -78,7 +82,7 @@ const createWindow = () => {
       submenu: [
         {
           label: 'Editar',
-          click: () => { editWindow() }
+          click: () => { editWindow(editWindow) }
         }
       ]
     },
@@ -198,7 +202,7 @@ ipcMain.on('imprimir-turno', (event, respuesta) => {
 app.whenReady().then(() => {
   startServer();
   createWindow();
-  editWindow()
+  // editWindow()
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
