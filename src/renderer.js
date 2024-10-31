@@ -50,7 +50,7 @@ async function crearTurno(servicioId) {
     if (response.ok) {
       const turno = await response.json();
       console.log(turno);
-      alert(`Su turno es: ${turno.servicio}, N° ${turno.dataValues.numeroTurno}, Fecha: ${turno.dataValues.fecha}`);
+      // alert(`Su turno es: ${turno.servicio}, N° ${turno.dataValues.numeroTurno}, Fecha: ${turno.dataValues.fecha}`);
       // window.electronAPI.imprimirTurno({ servicio: turno.servicio, numero: turno.dataValues.numeroTurno, fecha: turno.dataValues.fecha });
     } else {
       alert('Error al crear el turno');

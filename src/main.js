@@ -1,10 +1,39 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('node:path');
 const { spawn } = require('child_process')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
+}
+
+const editWindow = () => {
+  // Crear la nueva ventana de edición
+  const editWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    title: 'Editar',
+    // parent: mainWindow, // Hacer que la ventana de edición sea hija de la principal
+    modal: true,
+    webPreferences: {
+      contextIsolation: true,
+      enableRemoteModule: false,
+      nodeIntegration: false,
+    },
+  });
+
+  // Verifica si la ventana ya está abierta
+  if (editWindow) {
+    editWindow.focus();
+    return;
+  }
+
+  editWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/edit.html`)); // Cargar el contenido de la ventana de edición
+
+  // Liberar el objeto editWindow cuando se cierre la ventana
+  editWindow.on('closed', () => {
+    editWindow = null;
+  });
 }
 
 const createWindow = () => {
@@ -19,6 +48,10 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+    fullscreen: true, // Abre en modo pantalla completa
+    frame: true, // Con bordes de ventana
+    autoHideMenuBar: true, // Oculta automáticamente la barra de menú
+    resizable: true,
   });
 
   // and load the index.html of the app.
@@ -32,6 +65,47 @@ const createWindow = () => {
     mainWindow.show();
   })
 
+  // Definir el menú personalizado
+  const menuTemplate = [
+    {
+      label: 'Archivo',
+      submenu: [
+        { role: 'quit', label: 'Salir' }
+      ]
+    },
+    {
+      label: 'Opciones',
+      submenu: [
+        {
+          label: 'Editar',
+          click: () => { editWindow() }
+        }
+      ]
+    },
+    {
+      label: 'Ayuda',
+      submenu: [
+        {
+          label: 'Acerca de',
+          click: () => {
+            console.log('Mostrar información de la aplicación');
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F11') {
+      mainWindow.setMenuBarVisibility(true)
+    }
+    if (input.key === 'F12') {
+      mainWindow.webContents.toggleDevTools(); // Alternar DevTools
+    }
+  });
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 };
@@ -93,7 +167,7 @@ function imprimirRespuestaTurno(respuesta) {
             <p>Impreso el: <span id="fechaActual"></span></p>
           </div>
         </div>
-        
+
         <script>
           // Script para mostrar la fecha actual de impresión
           document.getElementById('fechaActual').innerText = new Date().toLocaleDateString();
@@ -122,8 +196,9 @@ ipcMain.on('imprimir-turno', (event, respuesta) => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow();
   startServer();
+  createWindow();
+  editWindow()
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
