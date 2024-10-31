@@ -38,7 +38,7 @@ const createTurno = async (servicioId) => {
     });
 
     // res.status(201).json(nuevoTurno);
-    return nuevoTurno;
+    return {...nuevoTurno, servicio: servicio.nombre};
   } catch (error) {
     console.error('Error al crear el turno:', error);
     // res.status(500).json({ error: 'Error interno del servidor' });

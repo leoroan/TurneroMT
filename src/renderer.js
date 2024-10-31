@@ -23,7 +23,7 @@ async function cargarServicios() {
       boton.classList.add('boton-servicio', 'btn', 'btn-success', 'm-5', 'shadow-lg', 'btn-lg', 'p-5');
       boton.textContent = servicio.nombre;
       boton.onclick = () => {
-        console.log(`Seleccionaste el servicio: ${servicio.nombre}, ${servicio.id}`);
+        // console.log(`Seleccionaste el servicio: ${servicio.nombre}, ${servicio.id}`);
         crearTurno(servicio.id);
       };
 
@@ -36,7 +36,7 @@ async function cargarServicios() {
 }
 
 // Función para hacer POST del turno con el servicioId
-async function crearTurno(servicioId) {  
+async function crearTurno(servicioId) {
   try {
     const data = { servicioId: servicioId };
     const response = await fetch(`${apiTurnosURL}${servicioId}`, {
@@ -50,7 +50,8 @@ async function crearTurno(servicioId) {
     if (response.ok) {
       const turno = await response.json();
       console.log(turno);
-      alert(`Su turno es: N° ${turno.numeroTurno}`);
+      alert(`Su turno es: ${turno.servicio}, N° ${turno.dataValues.numeroTurno}, Fecha: ${turno.dataValues.fecha}`);
+      // window.electronAPI.imprimirTurno({ servicio: turno.servicio, numero: turno.dataValues.numeroTurno, fecha: turno.dataValues.fecha });
     } else {
       alert('Error al crear el turno');
     }

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const { spawn } = require('child_process')
 
@@ -13,7 +13,9 @@ const createWindow = () => {
     width: 800,
     height: 600,
     show: false,
-    nodeIntegration: true,
+    contextIsolation: true,
+    enableRemoteModule: false,
+    nodeIntegration: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -45,6 +47,76 @@ function startServer() {
     console.log(`Server exited with code ${code}`)
   })
 }
+
+function imprimirRespuestaTurno(respuesta) {
+  const ventanaImpresion = new BrowserWindow({ show: false });
+  ventanaImpresion.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(`
+    <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Impresión de Turno</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+          }
+          .container {
+            border: 1px solid #000;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+          }
+          h1 {
+            font-size: 18px;
+            margin-bottom: 10px;
+          }
+          p {
+            margin: 5px 0;
+          }
+          .label {
+            font-weight: bold;
+          }
+          .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Detalles del Turno</h1>
+          <p><span class="label">Servicio:</span> ${respuesta.servicio}</p>
+          <p><span class="label">Número de Turno:</span> ${respuesta.numero}</p>
+          <div class="footer">
+            <p>Impreso el: <span id="fechaActual"></span></p>
+          </div>
+        </div>
+        
+        <script>
+          // Script para mostrar la fecha actual de impresión
+          document.getElementById('fechaActual').innerText = new Date().toLocaleDateString();
+        </script>
+      </body>
+      </html>
+  `));
+
+  ventanaImpresion.webContents.on('did-finish-load', () => {
+    ventanaImpresion.webContents.print({
+      silent: true, // Cambia a true para imprimir sin mostrar el diálogo
+      printBackground: true,
+    }, (success, errorType) => {
+      if (!success) console.error("Error en la impresión:", errorType);
+      ventanaImpresion.close();
+    });
+  });
+}
+
+// Escuchar el evento de impresión desde el renderer
+ipcMain.on('imprimir-turno', (event, respuesta) => {
+  imprimirRespuestaTurno(respuesta);
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
