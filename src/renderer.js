@@ -20,7 +20,7 @@ async function cargarServicios() {
     servicios.forEach(servicio => {
       // Crear un botón
       const boton = document.createElement('button');
-      boton.classList.add('boton-servicio', 'btn', 'btn-success', 'm-5', 'shadow-lg', 'btn-lg', 'p-5');
+      boton.classList.add('button-54', 'btn', 'btn-success', 'm-3', 'shadow-lg', 'btn-lg', 'p-5', 'w-25', 'fs-1');
       boton.textContent = servicio.nombre;
       boton.onclick = () => {
         // console.log(`Seleccionaste el servicio: ${servicio.nombre}, ${servicio.id}`);
@@ -50,7 +50,7 @@ async function crearTurno(servicioId) {
     if (response.ok) {
       const turno = await response.json();
       console.log(turno);
-      // alert(`Su turno es: ${turno.servicio}, N° ${turno.dataValues.numeroTurno}, Fecha: ${turno.dataValues.fecha}`);
+      alert(`Su turno es: ${turno.servicio}, N° ${turno.dataValues.numeroTurno}, Fecha: ${turno.dataValues.fecha}`);
       // window.electronAPI.imprimirTurno({ servicio: turno.servicio, numero: turno.dataValues.numeroTurno, fecha: turno.dataValues.fecha });
     } else {
       alert('Error al crear el turno');

@@ -1,43 +1,46 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('node:path');
-const { spawn } = require('child_process')
+const { spawn } = require('child_process');
+
+let mainWindow;
+let editWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const editWindow = (mainWindow) => {
-  // Crear la nueva ventana de edición
-  const editWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
-    title: 'Editar',
-    alwaysOnTop: true,
-    parent: mainWindow, // Hacer que la ventana de edición sea hija de la principal
-    modal: true,
-    autoHideMenuBar: true,
-    resizable: true,
-    webPreferences: {
-      contextIsolation: true,
-      enableRemoteModule: false,
-      nodeIntegration: false,
-    },
-  });
-
-  // Verifica si la ventana ya está abierta
+const createEditWindow = () => {
   if (editWindow) {
     editWindow.focus();
     return;
   }
 
-  editWindow.loadFile(path.join(__dirname, `../views/editar/edit.html`)); // Cargar el contenido de la ventana de edición
+  // Crear la ventana de edición
+  editWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    title: 'Editar',
+    alwaysOnTop: true,
+    parent: mainWindow,
+    modal: true,
+    autoHideMenuBar: true,
+    resizable: true,
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  // Cargar el archivo edit.html desde la ruta correcta
+  editWindow.loadFile('./views/editar/edit.html');  
 
   // Liberar el objeto editWindow cuando se cierre la ventana
   editWindow.on('closed', () => {
     editWindow = null;
   });
-}
+};
 
 const createWindow = () => {
   // Create the browser window.
@@ -82,7 +85,7 @@ const createWindow = () => {
       submenu: [
         {
           label: 'Editar',
-          click: () => { editWindow(editWindow) }
+          click: () => { createEditWindow() }
         }
       ]
     },
@@ -202,7 +205,6 @@ ipcMain.on('imprimir-turno', (event, respuesta) => {
 app.whenReady().then(() => {
   startServer();
   createWindow();
-  // editWindow()
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
