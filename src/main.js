@@ -6,9 +6,9 @@ let mainWindow;
 let editWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
+// if (require('electron-squirrel-startup')) {
+//   app.quit();
+// }
 
 const createEditWindow = () => {
   if (editWindow) {
@@ -34,7 +34,7 @@ const createEditWindow = () => {
   });
 
   // Cargar el archivo edit.html desde la ruta correcta
-  editWindow.loadFile('./views/editar/edit.html');  
+  editWindow.loadFile('./views/editar/edit.html');
 
   // Liberar el objeto editWindow cuando se cierre la ventana
   editWindow.on('closed', () => {
@@ -42,7 +42,7 @@ const createEditWindow = () => {
   });
 };
 
-const createWindow = () => {
+const createWindow = () => {  
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -118,15 +118,28 @@ const createWindow = () => {
 };
 
 // Iniciar servidor Express en paralelo con Electron
-function startServer() {
-  const serverProcess = spawn('node', ['./server/index.js'], {
-    stdio: 'inherit',
-    shell: true
-  })
+// function startServer() {
+//   const serverProcess = spawn('node', ['./server/index.js'], {
+//     stdio: 'inherit',
+//     shell: true
+//   })
 
-  serverProcess.on('close', (code) => {
-    console.log(`Server exited with code ${code}`)
-  })
+//   serverProcess.on('close', (code) => {
+//     console.log(`Server exited with code ${code}`)
+//   })
+// }
+function startServer() {
+  return new Promise((resolve, reject) => {
+    const serverProcess = spawn("node", ["./server/index.js"], {
+      // detached: true,  // El proceso se ejecuta en segundo plano
+      stdio: "inherit",
+      shell: true
+    });
+
+    serverProcess.unref();  // Permite que el proceso principal termine sin esperar al servidor
+
+    resolve();
+  });
 }
 
 function imprimirRespuestaTurno(respuesta) {
@@ -202,17 +215,25 @@ ipcMain.on('imprimir-turno', (event, respuesta) => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  startServer();
-  createWindow();
+// app.whenReady().then(() => {
+//   startServer();
+//   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
+app.whenReady().then(async () => {
+  try {
+    await startServer();
+    createWindow();
+
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
