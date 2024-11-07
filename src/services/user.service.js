@@ -1,4 +1,5 @@
-import { User } from '../models/User.model.js'
+// import { User } from '../models/User.model.mjs'
+const { User } = require('../models')
 
 // Obtener todos los usuarios
 const getAllUsers = async () => {
@@ -18,7 +19,11 @@ const createUser = async (userData) => {
   }
 }
 
-export {
+// export {
+//   getAllUsers,
+//   createUser
+// }
+module.exports = {
   getAllUsers,
   createUser
 }

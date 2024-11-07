@@ -1,8 +1,11 @@
-import { Router } from 'express'
-import { getAllServices, createService } from '../services/servicio.service.js'
+// import { Router } from 'express'
+// import { getAllServices, createService } from '../services/servicio.service.mjs'
 
-const router = Router()
+// const router = Router()
+const express = require('express')
+const { getAllServices, createService } = require('../services/servicio.service')
 
+const router = express.Router()
 //"/api/servicios"
 
 // Ruta para obtener todos los usuarios
@@ -17,4 +20,5 @@ router.post('/', async (req, res) => {
   res.json(nuevo)
 })
 
-export default router 
+// export default router 
+module.exports = router

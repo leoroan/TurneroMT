@@ -1,9 +1,17 @@
-import Sequelize from 'sequelize'
-import sequelize from '../config/db.config.js'
+// import Sequelize from 'sequelize'
+// import sequelize from '../config/db.config.mjs'
 
-import { Servicio } from './Servicio.model.js'
-import { Turno } from './Turno.model.js'
-import { User } from './User.model.js'
+// import { Servicio } from './Servicio.model.mjs'
+// import { Turno } from './Turno.model.mjs'
+// import { User } from './User.model.mjs'
+
+const Sequelize = require('sequelize')
+const sequelize = require('../config/db.config')
+
+// Cargar modelos
+const User = require('./User.model')// Importar el modelo
+const Turno = require('./Turno.model')
+const Servicio = require('./Servicio.model')
 
 // Establezco las relaciones
 Servicio.hasMany(Turno, { foreignKey: 'servicioId', as: 'turnos' });
@@ -20,7 +28,14 @@ const syncDatabase = async () => {
   }
 }
 
-export {
+// export {
+//   sequelize,
+//   syncDatabase,
+//   User,
+//   Turno,
+//   Servicio
+// }
+module.exports = {
   sequelize,
   syncDatabase,
   User,

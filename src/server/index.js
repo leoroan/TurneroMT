@@ -1,6 +1,9 @@
-import { app } from './app.js'
-import { syncDatabase } from '../models/index.js'
-import { port } from '../config/server.config.js'
+// import { app } from './app.mjs'
+// import { syncDatabase } from '../models/index.mjs'
+// import { port } from '../config/server.config.mjs'
+const app = require('./app')
+const { syncDatabase } = require('../models')
+const { port } = require('../config/server.config')
 
 // Sincronizar la base de datos y luego iniciar el servidor
 syncDatabase().then(() => {

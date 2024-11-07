@@ -1,5 +1,6 @@
-import { Turno } from '../models/Turno.model.js'
-import { Servicio } from '../models/Servicio.model.js'
+// import { Turno } from '../models/Turno.model.mjs'
+// import { Servicio } from '../models/Servicio.model.mjs'
+const { Turno, Servicio } = require('../models')
 
 const getAllTurnos = async () => {
   try {
@@ -47,7 +48,11 @@ const createTurno = async (servicioId) => {
   }
 }
 
-export {
+// export {
+//   getAllTurnos,
+//   createTurno
+// }
+module.exports = {
   getAllTurnos,
   createTurno
 }

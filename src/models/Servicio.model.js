@@ -1,5 +1,7 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.config.js';
+// import { DataTypes } from 'sequelize';
+// import sequelize from '../config/db.config.mjs';
+const { DataTypes } = require('sequelize')
+const sequelize = require('../config/db.config')
 
 const Servicio = sequelize.define('Servicio', {
   nombre: {
@@ -14,4 +16,5 @@ const Servicio = sequelize.define('Servicio', {
   timestamps: true,
 });
 
-export { Servicio }
+// export { Servicio }
+module.exports = Servicio

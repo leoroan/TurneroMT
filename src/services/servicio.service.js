@@ -1,4 +1,5 @@
-import { Servicio } from '../models/Servicio.model.js'
+// import { Servicio } from '../models/Servicio.model.mjs'
+const { Servicio } = require('../models')
 
 const getAllServices = async () => {
   try {
@@ -18,7 +19,11 @@ const createService = async (data) => {
   }
 }
 
-export {
+// export {
+//   getAllServices,
+//   createService
+// }
+module.exports = {
   getAllServices,
   createService
 }

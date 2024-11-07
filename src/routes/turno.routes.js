@@ -1,7 +1,11 @@
-import { Router } from 'express'
-import { getAllTurnos, createTurno } from '../services/turno.service.js'
+// import { Router } from 'express'
+// import { getAllTurnos, createTurno } from '../services/turno.service.mjs'
 
-const router = Router()
+// const router = Router()
+const express = require('express')
+const { getAllTurnos, createTurno } = require('../services/turno.service')
+
+const router = express.Router()
 
 //"/api/turnos"
 
@@ -18,4 +22,5 @@ router.post('/:servicioId', async (req, res) => {
   res.json(nuevo)
 })
 
-export default router 
+// export default router 
+module.exports = router

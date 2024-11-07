@@ -1,7 +1,11 @@
-import { Router } from 'express'
-import { getAllUsers, createUser } from '../services/user.service.js'
+// import { Router } from 'express'
+// import { getAllUsers, createUser } from '../services/user.service.mjs'
 
-const router = Router()
+// const router = Router()
+const express = require('express')
+const { getAllUsers, createUser } = require('../services/user.service')
+
+const router = express.Router()
 
 // Ruta para obtener todos los usuarios
 router.get('/', async (req, res) => {
@@ -15,4 +19,5 @@ router.post('/', async (req, res) => {
   res.json(newUser)
 })
 
-export default router
+// export default router
+module.exports = router

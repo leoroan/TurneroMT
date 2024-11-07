@@ -1,4 +1,6 @@
-import { Sequelize } from 'sequelize'
+// import { Sequelize } from 'sequelize'
+const { Sequelize } = require('sequelize')
+
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -6,4 +8,5 @@ const sequelize = new Sequelize({
   logging: false
 })
 
-export default sequelize 
+// export default sequelize 
+module.exports = sequelize
